@@ -3,6 +3,7 @@ package com.branovitski.chililab.ui.gif_list
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
+import androidx.paging.LoadState
 
 @AndroidEntryPoint
 class ChiliLabActivity : AppCompatActivity(R.layout.chili_lab_activity) {
@@ -26,6 +29,15 @@ class ChiliLabActivity : AppCompatActivity(R.layout.chili_lab_activity) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupGifsList()
+
+        gifsAdapter?.addLoadStateListener { state ->
+            val refreshState = state.refresh
+            binding.gifsList.isVisible = refreshState != LoadState.Loading
+            binding.refreshBar.isVisible = refreshState == LoadState.Loading
+            if (refreshState is LoadState.Error) {
+                Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -54,7 +66,7 @@ class ChiliLabActivity : AppCompatActivity(R.layout.chili_lab_activity) {
     private fun setupGifsList() {
         gifsAdapter = GifsAdapter()
         binding.gifsList.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.gifsList.adapter = gifsAdapter
 
         lifecycleScope.launch {

@@ -7,7 +7,6 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.branovitski.chililab.databinding.ListItemBinding
-import com.branovitski.chililab.model.GifListItem
 import com.bumptech.glide.Glide
 
 class GifsAdapter : PagingDataAdapter<GifListItem, GifsAdapter.GifViewHolder>(GifsDiffCallback()) {
